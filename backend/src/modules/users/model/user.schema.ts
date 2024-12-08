@@ -17,6 +17,7 @@ export const userSchema = new Schema<User>(
     },
   },
   {
+    timestamps: true,
     toJSON: {
       transform: (_, ret) => {
         delete ret.password;

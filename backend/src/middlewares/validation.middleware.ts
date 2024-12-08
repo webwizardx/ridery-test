@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { z, ZodError } from "zod";
+import { z, ZodError, ZodIssue } from "zod";
 
 export function validationMiddleware(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -8,10 +8,10 @@ export function validationMiddleware(schema: z.ZodObject<any, any>) {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errorMessages = error.errors.map((issue: any) => ({
-          message: issue.message,
+        const errorMessages = error.errors.map((issue: ZodIssue) => ({
+          [issue.path[0]]: issue.message,
         }));
-        res.status(422).json({ error: "Invalid data", details: errorMessages });
+        res.status(422).json({ error: "Invalid data", data: errorMessages });
       } else {
         res.status(500).json({ error: "Internal Server Error" });
       }
