@@ -3,6 +3,7 @@ import cors from "cors";
 import { connect } from "mongoose";
 import usersRouter from "./modules/users/routes";
 import authRouter from "./modules/auth/routes";
+import vehicleRouter from "./modules/vehicles/routes";
 process.loadEnvFile();
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", authRouter);
 app.use("/api", usersRouter);
+app.use("/api", vehicleRouter);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

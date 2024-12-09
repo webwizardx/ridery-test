@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
-import { userModel } from "../../users/model/user.schema";
+import { userModel } from "../../users/model/user.model";
 
 export default class AuthService {
   static async login({ email, password }: { email: string; password: string }) {

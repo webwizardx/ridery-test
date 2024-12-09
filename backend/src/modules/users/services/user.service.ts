@@ -1,4 +1,4 @@
-import { userModel } from "../model/user.schema";
+import { userModel } from "../model/user.model";
 import bcrypt from "bcrypt";
 import { User } from "../types";
 
