@@ -20,21 +20,22 @@ const form = reactive({
   passwordRules: [
     (v: string) => !!v || 'La contraseña es obligatoria',
   ],
+  validationErrors: [] as string[]
 })
 
-const login = async () => {
+const signUp = async () => {
   if (!form.isValid) return;
   form.isLoading = true;
 
-  const [isAuthenticated, error] = await store.login(form)
+  const [success, error] = await store.signUp(form)
 
-  if (!isAuthenticated) {
+  if (!success) {
     form.errorMessage = error;
     form.isLoading = false;
     return;
   }
 
-  router.push({ name: 'admin' });
+  router.push({ name: 'login' });
   form.isLoading = false;
 }
 
@@ -43,20 +44,22 @@ const login = async () => {
 <template>
   <main>
     <FormLayout>
-      <v-alert v-if="form.errorMessage" closable class="mb-4" icon="mdi-alert-circle" title="Error al iniciar sesión"
-        :text="form.errorMessage" variant="tonal" type="error"></v-alert>
+
+      <v-alert v-if="form.errorMessage" closable class="mb-4" icon="mdi-alert-circle" title="Error al registrarse"
+        variant="tonal" type="error">
+      </v-alert>
       <h2 class="tw-text-2xl mb-2">¡Bienvenido!</h2>
-      <span class="d-inline-block tw-text-gray-500 mb-4">Inicia sesión en tu cuenta y administra tus viajes</span>
-      <v-form v-model="form.isValid" @submit.prevent="login">
+      <span class="d-inline-block tw-text-gray-500 mb-4">Registrate y empieza a administrar tus viajes</span>
+      <v-form v-model="form.isValid" @submit.prevent="signUp">
         <v-text-field class="mb-4 tw-max-w-" v-model="form.email" :rules="form.emailRules" label="Correo electrónico"
           required variant="outlined" />
         <v-text-field class="mb-4 tw-max-w-96" v-model="form.password" :rules="form.passwordRules" label="Contraseña"
           required variant="outlined" />
         <v-btn variant="plain" block class="mb-4">
-          <router-link to="/signup">¿No tienes una cuenta? Regístrate</router-link>
+          <router-link to="/login">¿Posees una cuenta? Inicia sesión</router-link>
         </v-btn>
         <v-btn :loading="form.isLoading" rounded="0" variant="tonal" block type="submit">
-          Iniciar sesión
+          Registrarse
         </v-btn>
       </v-form>
     </FormLayout>

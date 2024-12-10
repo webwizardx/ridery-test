@@ -1,28 +1,18 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axiosInstance from '@/services/axios'
+import { useRouter } from 'vue-router'
 
 const useAuthStore = defineStore('auth', () => {
   const localStorageUser = localStorage.getItem('user')
-  const user = ref(localStorageUser ? JSON.parse(localStorageUser) : { _id: '', email: '' })
+  const router = useRouter()
   const token = ref(localStorage.getItem('token') || '')
-  const setUser = (newUser: { _id: string; email: string }) => {
-    user.value = newUser
-    localStorage.setItem('user', JSON.stringify(newUser))
-  }
-  const setToken = (newToken: string) => {
-    token.value = newToken
-    localStorage.setItem('token', newToken)
-  }
+  const user = ref(localStorageUser ? JSON.parse(localStorageUser) : { _id: '', email: '' })
 
-  const resetState = () => {
-    user.value = { _id: '', email: '' }
-    token.value = ''
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
-  }
-
-  const login = async (payload: { email: string; password: string }) => {
+  const login = async (payload: {
+    email: string
+    password: string
+  }): Promise<[boolean, string]> => {
     const { data, status } = await axiosInstance.post<{
       message: string
       data: {
@@ -36,19 +26,70 @@ const useAuthStore = defineStore('auth', () => {
 
     if (!data || status !== 201) {
       console.warn(`[useAuthStore - login] Error: ${JSON.stringify(data)} - Status: ${status}`)
-      resetState()
-      return false
+      return [false, data?.message || 'Ocurrió un error al intentar iniciar sesión']
     }
     setToken(data.data.token)
     setUser(data.data.user)
-    return true
+    return [true, '']
   }
 
+  const logout = () => {
+    resetState()
+    router.push('/login')
+  }
+
+  const resetState = () => {
+    user.value = { _id: '', email: '' }
+    token.value = ''
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+  }
+
+  const setToken = (newToken: string) => {
+    token.value = newToken
+    localStorage.setItem('token', newToken)
+  }
+
+  const setUser = (newUser: { _id: string; email: string }) => {
+    user.value = newUser
+    localStorage.setItem('user', JSON.stringify(newUser))
+  }
+
+  const signUp = async (payload: {
+    email: string
+    password: string
+  }): Promise<[boolean, string, string[]]> => {
+    const { data, status } = await axiosInstance.post<{
+      message: string
+      data: {
+        user: {
+          _id: string
+          email: string
+        }
+      }
+    }>('/users', payload, { validateStatus: () => true })
+
+    if (!data || status !== 201) {
+      console.warn(`[useAuthStore - signUp] Error: ${JSON.stringify(data)} - Status: ${status}`)
+      let validationErrors: string[] = []
+      if (Array.isArray(data?.data)) {
+        validationErrors = data.data
+          .map((error: Record<string, string>) => Object.values(error))
+          .flat()
+        console.log(validationErrors)
+      }
+
+      return [false, data?.message || 'Ocurrió un error al intentar registrarse', validationErrors]
+    }
+    return [true, '', []]
+  }
   return {
     login,
+    logout,
     resetState,
     setToken,
     setUser,
+    signUp,
     token,
     user,
   }
