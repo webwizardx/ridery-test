@@ -12,6 +12,8 @@ services:
       - /usr/src/app/node_modules
     environment:
       - MONGO_URI=mongodb://mongo:27017/ridery-test
+      - PORT=3000
+      - SECRET_KEY=secretkey
     depends_on:
       - mongo
 
