@@ -1,7 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { z, ZodError, ZodIssue } from "zod";
 
-export function validationMiddleware(schema: z.ZodObject<any, any>) {
+/**
+ * Middleware function to validate request body against a given Zod schema.
+ *
+ * @param schema - The Zod schema to validate the request body against.
+ * @returns A middleware function that validates the request body and calls the next middleware if valid, or responds with an error if invalid.
+ *
+ * @author Jonathan Alvarado
+ */
+export default function validationMiddleware(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);

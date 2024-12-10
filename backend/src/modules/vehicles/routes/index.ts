@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validationMiddleware } from "../../../middlewares/validation.middleware";
+import validationMiddleware from "../../../middlewares/validation.middleware";
 import {
   partialVehicleZodSchema,
   vehicleZodSchema,

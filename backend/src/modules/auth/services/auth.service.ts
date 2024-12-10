@@ -1,9 +1,27 @@
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 import { userModel } from "../../users/model/user.model";
+import { User } from "../../users/types";
 
 export default class AuthService {
-  static async login({ email, password }: { email: string; password: string }) {
+  /**
+   * Logs in a user with the provided email and password.
+   *
+   * @param {Object} params - The login parameters.
+   * @param {string} params.email - The email of the user.
+   * @param {string} params.password - The password of the user.
+   * @returns {Promise<{ token: string; user: User }>} A promise that resolves to an object containing the authentication token and the user details.
+   * @throws {Error} If the user is not found or the credentials are invalid.
+   *
+   * @author Jonathan Alvarado
+   */
+  static async login({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<{ token: string; user: User }> {
     const user = await userModel.findOne({ email });
 
     if (!user) {
