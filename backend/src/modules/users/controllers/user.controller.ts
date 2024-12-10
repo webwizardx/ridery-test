@@ -25,16 +25,16 @@ export default class UserController {
       const user = await UserService.create(req.body);
 
       if (!user) {
-        res.status(400).json({ message: "User already exists" });
+        res.status(400).json({ message: "El usuario existe en el sistema." });
         return;
       }
 
       res
         .status(201)
-        .json({ message: "User created successfully", data: user });
+        .json({ message: "Usuario creado exitosamente", data: user });
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while creating the user";
+        error.message || "Ha ocurrido un error al intentar crear el usuario.";
 
       res.status(500).json({ message });
     }

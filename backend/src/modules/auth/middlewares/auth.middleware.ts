@@ -23,14 +23,18 @@ export default function authMiddleware(
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    res.status(401).json({ message: "Authorization header missing" });
+    res
+      .status(401)
+      .json({ message: "La cabecera de Autorización no fue encontrada." });
     return;
   }
 
   const token = authHeader.split(" ")[1];
 
   if (!token) {
-    res.status(401).json({ message: "Token missing" });
+    res
+      .status(401)
+      .json({ message: "El token de autenticación no fue encontrado" });
     return;
   }
 
@@ -42,6 +46,6 @@ export default function authMiddleware(
     req.user = decoded.user as User;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    res.status(401).json({ message: "Token de autenticación no válido" });
   }
 }

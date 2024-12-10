@@ -17,10 +17,10 @@ export default class AuthController {
     try {
       const data = await AuthService.login(req.body);
 
-      res.status(201).json({ message: "Login successful", data });
+      res.status(201).json({ message: "Inicio de sesión exitoso", data });
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while creating the user";
+        error.message || "Ha ocurrido un error al intentar iniciar sesión";
 
       res.status(500).json({ message });
     }

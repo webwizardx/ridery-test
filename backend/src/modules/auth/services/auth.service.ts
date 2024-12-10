@@ -25,13 +25,15 @@ export default class AuthService {
     const user = await userModel.findOne({ email });
 
     if (!user) {
-      throw new Error(`User not found with email: ${email}.`);
+      throw new Error(
+        `Usuario no encontrado con el correo electrónico: ${email}.`,
+      );
     }
 
     const isPasswordMatching = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatching) {
-      throw new Error("Credentials are not valid.");
+      throw new Error("Las credenciales no son válidas.");
     }
 
     const token = jsonwebtoken.sign(

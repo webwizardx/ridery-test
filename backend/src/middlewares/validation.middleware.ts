@@ -16,12 +16,16 @@ export default function validationMiddleware(schema: z.ZodObject<any, any>) {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errorMessages = error.errors.map((issue: ZodIssue) => ({
-          [issue.path[0]]: issue.message,
-        }));
-        res.status(422).json({ error: "Invalid data", data: errorMessages });
+        const errorMessages = error.errors.map((issue: ZodIssue) => {
+          return {
+            [issue.path[0]]: issue.message,
+          };
+        });
+        res
+          .status(422)
+          .json({ message: "Data no valida", data: errorMessages });
       } else {
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ message: "Ha ocurrido un error inesperado" });
       }
     }
   };

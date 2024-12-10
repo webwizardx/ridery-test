@@ -26,16 +26,18 @@ export default class VehicleController {
       const vehicle = await VehicleService.create({ ...body, createdBy });
 
       if (!vehicle) {
-        res.status(400).json({ message: "Vehicle already exists" });
+        res
+          .status(400)
+          .json({ message: "El vehículo existe en nuestro sistema." });
         return;
       }
 
       res
         .status(201)
-        .json({ message: "Vehicle created successfully", data: vehicle });
+        .json({ message: "Vehículo creado exitosamente", data: vehicle });
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while creating the vehicle";
+        error.message || "Ha ocurrido un error al intentar crear el vehículo.";
 
       res.status(500).json({ message });
     }
@@ -62,7 +64,8 @@ export default class VehicleController {
       res.status(200).json(vehicles);
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while fetching the vehicles";
+        error.message ||
+        "Ha ocurrido un error al intentar buscar los vehículos.";
 
       res.status(500).json({ message });
     }
@@ -88,16 +91,18 @@ export default class VehicleController {
       const vehicle = await VehicleService.findOne(new Types.ObjectId(_id));
 
       if (!vehicle) {
-        res.status(404).json({ message: `Vehicle with _id ${_id} not found` });
+        res
+          .status(404)
+          .json({ message: `Vehículo con _id ${_id} no encontrado` });
         return;
       }
 
       res
         .status(200)
-        .json({ message: "Vehicle found successfully", data: vehicle });
+        .json({ message: "Vehículo encontrado exitosamente", data: vehicle });
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while fetching the vehicle";
+        error.message || "Ha ocurrido un error al intentar buscar el vehículo";
 
       res.status(500).json({ message });
     }
@@ -128,16 +133,19 @@ export default class VehicleController {
       });
 
       if (!vehicle) {
-        res.status(404).json({ message: `Vehicle with _id ${_id} not found` });
+        res
+          .status(404)
+          .json({ message: `Vehículo con _id ${_id} no encontrado` });
         return;
       }
 
       res
         .status(200)
-        .json({ message: "Vehicle updated successfully", data: vehicle });
+        .json({ message: "Vehículo actualizado exitosamente", data: vehicle });
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while updating the vehicle";
+        error.message ||
+        "Ha ocurrido un error al intentar actualizar el vehículo";
 
       res.status(500).json({ message });
     }
@@ -168,16 +176,19 @@ export default class VehicleController {
       });
 
       if (!vehicle) {
-        res.status(404).json({ message: `Vehicle with _id ${_id} not found` });
+        res
+          .status(404)
+          .json({ message: `Vehículo con _id ${_id} no encontrado` });
         return;
       }
 
       res
         .status(200)
-        .json({ message: "Vehicle updated successfully", data: vehicle });
+        .json({ message: "Vehículo actualizado exitosamente", data: vehicle });
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while updating the vehicle";
+        error.message ||
+        "Ha ocurrido un error al intentar actualizar el vehículo";
 
       res.status(500).json({ message });
     }
@@ -203,14 +214,17 @@ export default class VehicleController {
       const vehicle = await VehicleService.delete(new Types.ObjectId(_id));
 
       if (!vehicle) {
-        res.status(404).json({ message: `Vehicle with _id ${_id} not found` });
+        res
+          .status(404)
+          .json({ message: `Vehículo con _id ${_id} no encontrado` });
         return;
       }
 
-      res.status(200).json({ message: "Vehicle deleted successfully" });
+      res.status(200).json({ message: "Vehículo eliminado exitosamente" });
     } catch (error: any) {
       const message =
-        error.message || "An error occurred while deleting the vehicle";
+        error.message ||
+        "Ha ocurrido un error al intentar eliminar el vehículo";
 
       res.status(500).json({ message });
     }
