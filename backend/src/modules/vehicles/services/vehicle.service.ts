@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { PaginationResponse } from "../../../types/pagination";
+import { PaginatedResponse } from "../../../types/pagination";
 import { vehicleModel } from "../models/vehicle.model";
 import { Vehicle, VehicleQuery } from "../types";
 import { CreatedBy, UpdatedBy } from "../../users/types";
@@ -32,19 +32,45 @@ export default class VehicleService {
    * @param {number} [query.sort=-1] - The sort order (1 for ascending, -1 for descending).
    * @param {string} [query.sortBy="createdAt"] - The field to sort by.
    * @param {object} query.filters - Additional filters to apply to the query.
-   * @returns {Promise<PaginationResponse<Vehicle>>} A promise that resolves to a pagination response containing the vehicles.
+   * @returns {Promise<PaginatedResponse<Vehicle>>} A promise that resolves to a pagination response containing the vehicles.
    *
    * @author Jonathan Alvarado
    */
-  static async find(query: VehicleQuery): Promise<PaginationResponse<Vehicle>> {
-    const { limit, page, sort = -1, sortBy = "createdAt", ...filters } = query;
-    const skip = (page - 1) * limit;
+  static async find(query: VehicleQuery): Promise<PaginatedResponse<Vehicle>> {
+    const {
+      limit = 20,
+      page = 1,
+      sort = -1,
+      sortBy = "createdAt",
+      search = "",
+      ...filters
+    } = query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // Create a fuzzy search filter
+    const searchFilter = search
+      ? {
+          $or: [
+            { brand: { $regex: search, $options: "i" } },
+            { model: { $regex: search, $options: "i" } },
+            { status: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    if (filters.year) {
+      filters.year = Number(filters.year);
+    }
+
     const vehicles = await vehicleModel
-      .find(filters)
-      .sort({ [sortBy]: sort })
+      .find({ ...filters, ...searchFilter })
+      .sort({ [sortBy]: Number(sort) as 1 | -1 })
       .skip(skip)
       .limit(limit);
-    const totalCount = await vehicleModel.countDocuments(filters);
+    const totalCount = await vehicleModel.countDocuments({
+      ...filters,
+      ...searchFilter,
+    });
 
     return {
       data: vehicles,

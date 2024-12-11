@@ -2,38 +2,54 @@ import { vehicleModel } from "../models/vehicle.model";
 import { Vehicle, VehicleStatus } from "../types";
 
 export default async function vehiclesSeed() {
-  const vehicles: Vehicle[] = [
-    {
-      brand: "Chevrolet",
-      model: "Malibu",
-      year: 2021,
-      status: VehicleStatus.AVAILABLE,
-    },
-    {
-      brand: "Ford",
-      model: "Focus",
-      year: 2018,
-      status: VehicleStatus.IN_SERVICE,
-    },
-    {
-      brand: "Honda",
-      model: "Civic",
-      year: 2019,
-      status: VehicleStatus.IN_MAINTENANCE,
-    },
-    {
-      brand: "Nissan",
-      model: "Sentra",
-      year: 2022,
-      status: VehicleStatus.IN_SERVICE,
-    },
-    {
-      brand: "Toyota",
-      model: "Corolla",
-      year: 2020,
-      status: VehicleStatus.AVAILABLE,
-    },
+  function getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function getRandomElement<T>(array: T[]): T {
+    return array[getRandomInt(0, array.length - 1)];
+  }
+
+  const brands = [
+    "Chevrolet",
+    "Ford",
+    "Honda",
+    "Nissan",
+    "Toyota",
+    "BMW",
+    "Audi",
+    "Mercedes",
+    "Volkswagen",
+    "Hyundai",
   ];
+  const models = [
+    "Malibu",
+    "Focus",
+    "Civic",
+    "Sentra",
+    "Corolla",
+    "X5",
+    "A4",
+    "C-Class",
+    "Golf",
+    "Elantra",
+  ];
+  const statuses = [
+    VehicleStatus.AVAILABLE,
+    VehicleStatus.IN_SERVICE,
+    VehicleStatus.IN_MAINTENANCE,
+  ];
+
+  const vehicles: Vehicle[] = [];
+
+  for (let i = 0; i < 50; i++) {
+    vehicles.push({
+      brand: getRandomElement(brands),
+      model: getRandomElement(models),
+      year: getRandomInt(1990, 2024),
+      status: getRandomElement(statuses),
+    });
+  }
 
   for (const vehicle of vehicles) {
     const newVehicle = new vehicleModel(vehicle);

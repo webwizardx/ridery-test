@@ -10,4 +10,4 @@ export enum VehicleStatus {
 
 export type Vehicle = z.infer<typeof vehicleZodSchema>;
 
-export type VehicleQuery = PaginationQuery & Vehicle;
+export type VehicleQuery = PaginationQuery & Vehicle & { search?: string };

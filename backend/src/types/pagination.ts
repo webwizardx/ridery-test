@@ -5,7 +5,7 @@ export type PaginationQuery = {
   sortBy: string;
 };
 
-export type PaginationResponse<T> = {
+export type PaginatedResponse<T> = {
   data: T[];
   totalCount: number;
 } & PaginationQuery;

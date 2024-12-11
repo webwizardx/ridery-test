@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import axiosInstance from '@/services/axios'
 import { useRouter } from 'vue-router'
+import type { LoginResponse, SignupResponse, User } from '@/types/auth'
 
 const useAuthStore = defineStore('auth', () => {
   const localStorageUser = localStorage.getItem('user')
@@ -13,17 +14,9 @@ const useAuthStore = defineStore('auth', () => {
     email: string
     password: string
   }): Promise<[boolean, string]> => {
-    const { data, status } = await axiosInstance.post<{
-      message: string
-      data: {
-        token: string
-        user: {
-          _id: string
-          email: string
-        }
-      }
-    }>('/login', payload, { validateStatus: () => true })
-
+    const { data, status } = await axiosInstance.post<LoginResponse>('/login', payload, {
+      validateStatus: () => true,
+    })
     if (!data || status !== 201) {
       console.warn(`[useAuthStore - login] Error: ${JSON.stringify(data)} - Status: ${status}`)
       return [false, data?.message || 'Ocurrió un error al intentar iniciar sesión']
@@ -50,7 +43,7 @@ const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('token', newToken)
   }
 
-  const setUser = (newUser: { _id: string; email: string }) => {
+  const setUser = (newUser: User) => {
     user.value = newUser
     localStorage.setItem('user', JSON.stringify(newUser))
   }
@@ -59,15 +52,9 @@ const useAuthStore = defineStore('auth', () => {
     email: string
     password: string
   }): Promise<[boolean, string, string[]]> => {
-    const { data, status } = await axiosInstance.post<{
-      message: string
-      data: {
-        user: {
-          _id: string
-          email: string
-        }
-      }
-    }>('/users', payload, { validateStatus: () => true })
+    const { data, status } = await axiosInstance.post<SignupResponse>('/users', payload, {
+      validateStatus: () => true,
+    })
 
     if (!data || status !== 201) {
       console.warn(`[useAuthStore - signUp] Error: ${JSON.stringify(data)} - Status: ${status}`)
@@ -83,6 +70,7 @@ const useAuthStore = defineStore('auth', () => {
     }
     return [true, '', []]
   }
+
   return {
     login,
     logout,
