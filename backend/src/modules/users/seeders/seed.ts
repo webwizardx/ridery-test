@@ -10,6 +10,13 @@ export default async function usersSeed() {
   ];
 
   for (const user of users) {
+    const existingUser = await userModel.findOne({ email: user.email });
+
+    if (existingUser) {
+      console.log(`User ${user.email} already exists!`);
+      continue;
+    }
+
     user.password = await bcrypt.hash(user.password, 10);
     const newUser = new userModel(user);
     await newUser.save();

@@ -80,7 +80,7 @@ const useVehicleStore = defineStore('vehicle', () => {
     return data
   }
 
-  const createVehicle = async (vehicle: Vehicle): Promise<VehicleResponse | null> => {
+  const createVehicle = async (vehicle: Vehicle): Promise<[VehicleResponse, string | null]> => {
     isLoading.value = true
     const { data, status } = await axiosInstance.post<VehicleResponse>('/vehicles', vehicle, {
       validateStatus: () => true,
@@ -91,14 +91,17 @@ const useVehicleStore = defineStore('vehicle', () => {
         `[useVehicleStore - createVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
       )
       isLoading.value = false
-      return null
+      return [data, 'Ha ocurrido un error al crear el vehículo']
     }
 
     isLoading.value = false
-    return data
+    return [data, null]
   }
 
-  const updateVehicle = async (_id: string, vehicle: Vehicle): Promise<VehicleResponse | null> => {
+  const updateVehicle = async (
+    _id: string,
+    vehicle: Vehicle,
+  ): Promise<[VehicleResponse, string | null]> => {
     isLoading.value = true
     const { data, status } = await axiosInstance.put<VehicleResponse>(`/vehicles/${_id}`, vehicle, {
       validateStatus: () => true,
@@ -109,17 +112,17 @@ const useVehicleStore = defineStore('vehicle', () => {
         `[useVehicleStore - updateVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
       )
       isLoading.value = false
-      return null
+      return [data, 'Ha ocurrido un error al actualizar el vehículo']
     }
 
     isLoading.value = false
-    return data
+    return [data, null]
   }
 
   const patchVehicle = async (
     _id: string,
     vehicle: Partial<Vehicle>,
-  ): Promise<VehicleResponse | null> => {
+  ): Promise<[VehicleResponse, string | null]> => {
     isLoading.value = true
     const { data, status } = await axiosInstance.patch<VehicleResponse>(
       `/vehicles/${_id}`,
@@ -134,14 +137,14 @@ const useVehicleStore = defineStore('vehicle', () => {
         `[useVehicleStore - patchVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
       )
       isLoading.value = false
-      return null
+      return [data, 'Ha ocurrido un error al actualizar el vehículo']
     }
 
     isLoading.value = false
-    return data
+    return [data, null]
   }
 
-  const deleteVehicle = async (_id: string): Promise<Response | null> => {
+  const deleteVehicle = async (_id: string): Promise<[Response, string | null]> => {
     isLoading.value = true
     const { data, status } = await axiosInstance.delete<Response>(`/vehicles/${_id}`, {
       validateStatus: () => true,
@@ -152,11 +155,11 @@ const useVehicleStore = defineStore('vehicle', () => {
         `[useVehicleStore - deleteVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
       )
       isLoading.value = false
-      return null
+      return [data, 'Ha ocurrido un error al eliminar el vehículo']
     }
 
     isLoading.value = false
-    return data
+    return [data, null]
   }
 
   return {

@@ -53,6 +53,12 @@ const deleteVehicle = (_id: string) => {
 <template>
   <AdminLayout>
     <v-container>
+      <div class="d-flex flex-column flex-sm-row justify-space-between align-center mb-8 ga-3">
+        <h1 class="tw-text-3xl d-inline-block">Listado de Vehículos</h1>
+        <v-btn variant="flat" prepend-icon="mdi-plus-circle" color="blue" to="/vehicles/create">
+          Crear vehículo
+        </v-btn>
+      </div>
       <v-data-table-server v-model:items-per-page="query.limit" :headers="headers" :items="vehicles"
         :disable-sort="true" :items-length="totalCount" :loading="isLoading"
         loading-text="Obteniendo información de los vehículos..." items-per-page-text="Vehículos por página"
