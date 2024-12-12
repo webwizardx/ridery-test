@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { userModel } from "../model/user.model";
 
 export default async function usersSeed() {
@@ -9,6 +10,7 @@ export default async function usersSeed() {
   ];
 
   for (const user of users) {
+    user.password = await bcrypt.hash(user.password, 10);
     const newUser = new userModel(user);
     await newUser.save();
     console.log(`User ${user.email} created successfully!`);
