@@ -1,4 +1,4 @@
-import type { PaginatedQuery, PaginatedResponse } from './api'
+import type { PaginatedQuery, PaginatedResponse, ResponseWithData } from './api'
 
 export type PaginatedVehiclesResponse = PaginatedResponse<Vehicle>
 
@@ -13,5 +13,13 @@ export type Vehicle = {
   updatedAt?: string
 }
 
+export enum VehicleStatus {
+  AVAILABLE = 'Disponible',
+  IN_MAINTENANCE = 'En mantenimiento',
+  IN_SERVICE = 'En servicio',
+}
+
 export type VehicleQuery = PaginatedQuery &
   Partial<Pick<Vehicle, 'brand' | 'model' | 'status'>> & { search?: string }
+
+export type VehicleResponse = ResponseWithData<Vehicle>

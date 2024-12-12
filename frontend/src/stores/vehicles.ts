@@ -1,9 +1,14 @@
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import axiosInstance from '@/services/axios'
-import type { PaginatedVehiclesResponse, Vehicle, VehicleQuery } from '@/types/vehicle'
+import type {
+  PaginatedVehiclesResponse,
+  Vehicle,
+  VehicleQuery,
+  VehicleResponse,
+} from '@/types/vehicle'
 import { getURLSearchParamsByObject } from '@/utils'
-import type { PaginatedQuery } from '@/types/api'
+import type { PaginatedQuery, Response } from '@/types/api'
 
 const useVehicleStore = defineStore('vehicle', () => {
   const defaultQuery: PaginatedQuery = {
@@ -20,6 +25,7 @@ const useVehicleStore = defineStore('vehicle', () => {
     search: '',
   })
   const isLoading = ref(false)
+  const vehicle = ref<Vehicle | null>(null)
   const vehicles = ref<Vehicle[]>([])
   const totalCount = ref(0)
 
@@ -55,9 +61,112 @@ const useVehicleStore = defineStore('vehicle', () => {
     return data
   }
 
+  const getVehicle = async (_id: string): Promise<VehicleResponse | null> => {
+    isLoading.value = true
+    const { data, status } = await axiosInstance.get<VehicleResponse>(`/vehicles/${_id}`, {
+      validateStatus: () => true,
+    })
+
+    if (!data || status < 200 || status >= 300) {
+      console.warn(
+        `[useVehicleStore - getVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
+      )
+      isLoading.value = false
+      return null
+    }
+
+    isLoading.value = false
+    vehicle.value = data.data
+    return data
+  }
+
+  const createVehicle = async (vehicle: Vehicle): Promise<VehicleResponse | null> => {
+    isLoading.value = true
+    const { data, status } = await axiosInstance.post<VehicleResponse>('/vehicles', vehicle, {
+      validateStatus: () => true,
+    })
+
+    if (!data || status < 200 || status >= 300) {
+      console.warn(
+        `[useVehicleStore - createVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
+      )
+      isLoading.value = false
+      return null
+    }
+
+    isLoading.value = false
+    return data
+  }
+
+  const updateVehicle = async (_id: string, vehicle: Vehicle): Promise<VehicleResponse | null> => {
+    isLoading.value = true
+    const { data, status } = await axiosInstance.put<VehicleResponse>(`/vehicles/${_id}`, vehicle, {
+      validateStatus: () => true,
+    })
+
+    if (!data || status < 200 || status >= 300) {
+      console.warn(
+        `[useVehicleStore - updateVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
+      )
+      isLoading.value = false
+      return null
+    }
+
+    isLoading.value = false
+    return data
+  }
+
+  const patchVehicle = async (
+    _id: string,
+    vehicle: Partial<Vehicle>,
+  ): Promise<VehicleResponse | null> => {
+    isLoading.value = true
+    const { data, status } = await axiosInstance.patch<VehicleResponse>(
+      `/vehicles/${_id}`,
+      vehicle,
+      {
+        validateStatus: () => true,
+      },
+    )
+
+    if (!data || status < 200 || status >= 300) {
+      console.warn(
+        `[useVehicleStore - patchVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
+      )
+      isLoading.value = false
+      return null
+    }
+
+    isLoading.value = false
+    return data
+  }
+
+  const deleteVehicle = async (_id: string): Promise<Response | null> => {
+    isLoading.value = true
+    const { data, status } = await axiosInstance.delete<Response>(`/vehicles/${_id}`, {
+      validateStatus: () => true,
+    })
+
+    if (!data || status < 200 || status >= 300) {
+      console.warn(
+        `[useVehicleStore - deleteVehicle] Error: ${JSON.stringify(data)} - Status: ${status}`,
+      )
+      isLoading.value = false
+      return null
+    }
+
+    isLoading.value = false
+    return data
+  }
+
   return {
-    isLoading,
+    createVehicle,
+    deleteVehicle,
+    getVehicle,
     getVehicles,
+    updateVehicle,
+    patchVehicle,
+    isLoading,
     query,
     vehicles,
     totalCount,
