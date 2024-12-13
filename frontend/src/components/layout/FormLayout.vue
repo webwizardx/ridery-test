@@ -14,7 +14,7 @@
         </v-col>
         <v-col class="h-100 d-flex flex-column align-center pa-8" cols="12" md="12" lg="4">
           <v-sheet class="ma-auto bg-transparent w-100 tw-max-w-96">
-            <div class="d-flex d-lg-none tw-w-[400px] mb-12 bg-transparent">
+            <div class="d-flex d-lg-none tw-w-[280px] ma-auto mb-12 bg-transparent">
               <v-img aspect-ratio="16/9" src="https://corporativo.ridery.app/img/dark-logo.f7235ac8.svg"></v-img>
             </div>
             <slot></slot>

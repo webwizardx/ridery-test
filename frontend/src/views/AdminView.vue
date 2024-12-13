@@ -104,7 +104,7 @@ const deleteVehicle = async (_id: string) => {
         </v-btn>
       </div>
       <v-data-table-server v-model:items-per-page="query.limit" :headers="headers" :items="vehicles"
-        :disable-sort="true" :items-length="totalCount" :loading="isLoading"
+        :items-per-page-options="[10, 25, 50, 100]" :disable-sort="true" :items-length="totalCount" :loading="isLoading"
         loading-text="Obteniendo información de los vehículos..." items-per-page-text="Vehículos por página"
         no-data-text="No hay vehículos en nuestro sistema." :search="query.search" item-value="_id"
         @update:options="getVehicles" :mobile="isMobile">
