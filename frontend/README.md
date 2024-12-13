@@ -1,39 +1,28 @@
-# frontend
+# Proyecto Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+## Instrucciones para clonar, configurar y ejecutar el proyecto en un entorno local
 
-## Recommended IDE Setup
+### Clonar el repositorio
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+```bash
+git clone https://github.com/webwizardx/ridery-test.git
+cd ridery-test/frontend
+```
 
-## Type Support for `.vue` Imports in TS
+### Configurar el entorno local
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+1. Tener instalado [Node.js version 22](https://nodejs.org/en/download/prebuilt-installer) y npm en tu máquina.
+2. Crear un archivo `.env` en el directorio `frontend` con las variables de entorno necesarias. Puedes usar el archivo `.env.example` como referencia.
+3. Instalar las dependencias del proyecto:
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Ejecutar el proyecto
 
-```sh
+1. Iniciar el servidor de desarrollo:
+
+```bash
 npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
