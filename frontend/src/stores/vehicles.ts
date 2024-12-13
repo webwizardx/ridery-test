@@ -171,6 +171,7 @@ const useVehicleStore = defineStore('vehicle', () => {
     patchVehicle,
     isLoading,
     query,
+    vehicle,
     vehicles,
     totalCount,
   }

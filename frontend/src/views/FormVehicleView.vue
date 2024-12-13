@@ -2,15 +2,27 @@
 import FormLayout from '@/components/layout/FormLayout.vue';
 import useAuthStore from '@/stores/auth';
 import useVehicleStore from '@/stores/vehicles';
-import { VehicleStatus } from '@/types/vehicle';
+import { VehicleStatus, type Vehicle } from '@/types/vehicle';
+import { onMounted } from 'vue';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const store = useVehicleStore()
+const vehicleId = router.currentRoute.value.params._id
+if (vehicleId) {
+  store.getVehicle(vehicleId as string).then(response => {
+    if (response?.data) {
+      form.brand = response.data.brand;
+      form.model = response.data.model;
+      form.status = response.data.status as VehicleStatus;
+      form.year = response.data.year;
+    }
+  })
+}
 
 const form = reactive({
-  brand: 'BRTEST',
+  brand: '',
   brandRules: [
     (v: string) => !!v || 'La marca es obligatoria',
   ],
@@ -18,7 +30,7 @@ const form = reactive({
   messageType: 'error',
   isLoading: false,
   isValid: false,
-  model: 'MOTEST',
+  model: '',
   modelRules: [
     (v: string) => !!v || 'El modelo es obligatorio',
   ],
@@ -66,6 +78,32 @@ const createVehicle = async () => {
   form.isLoading = false;
 }
 
+const updateVehicle = async () => {
+  if (!form.isValid) return;
+  form.isLoading = true;
+
+  const [data, error] = await store.updateVehicle(vehicleId as string, form)
+
+  if (error) {
+    form.message = error;
+    form.messageType = 'error';
+    form.isLoading = false;
+    return;
+  }
+
+  form.message = data.message;
+  form.messageType = 'success';
+  form.isLoading = false;
+}
+
+const onSubmit = () => {
+  if (vehicleId) {
+    updateVehicle()
+  } else {
+    createVehicle()
+  }
+}
+
 </script>
 
 <template>
@@ -73,9 +111,10 @@ const createVehicle = async () => {
     <FormLayout>
       <v-alert v-if="form.message" closable class="mb-4" icon="mdi-alert-circle" @click:close="closeAlert"
         title="Mensaje" :text="form.message" variant="tonal" :type="form.messageType"></v-alert>
-      <h2 class="tw-text-2xl mb-2">¡Creación de vehículos!</h2>
-      <span class="d-inline-block tw-text-gray-500 mb-4">Empieza a registrar los vehículos al sistema</span>
-      <v-form v-model="form.isValid" @submit.prevent="createVehicle">
+      <h2 class="tw-text-2xl mb-2">¡{{ vehicleId ? 'Actualización' : 'Creación' }} de vehículos!</h2>
+      <span class="d-inline-block tw-text-gray-500 mb-4">Empieza a {{ vehicleId ? 'modificar' : 'registrar' }} los
+        vehículos al sistema</span>
+      <v-form v-model="form.isValid" @submit.prevent="onSubmit">
         <v-text-field class="mb-4 tw-max-w-" v-model="form.brand" :rules="form.brandRules" label="Marca" required
           variant="outlined" />
         <v-text-field class="mb-4 tw-max-w-96" v-model="form.model" :rules="form.modelRules" label="Modelo" required
@@ -87,7 +126,7 @@ const createVehicle = async () => {
           <router-link to="/admin">Volver al listado de vehículos</router-link>
         </v-btn>
         <v-btn :loading="form.isLoading" rounded="0" variant="tonal" block type="submit">
-          Crear vehículo
+          {{ vehicleId ? 'Actualizar' : 'Crear' }} vehículo
         </v-btn>
       </v-form>
     </FormLayout>

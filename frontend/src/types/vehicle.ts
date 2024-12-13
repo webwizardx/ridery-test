@@ -7,7 +7,7 @@ export type Vehicle = {
   createdBy?: string
   brand: string
   model: string
-  status: string
+  status: VehicleStatus | ''
   year: number
   createdAt?: string
   updatedAt?: string

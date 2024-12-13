@@ -5,6 +5,7 @@ import useVehicleStore from '@/stores/vehicles';
 import { VehicleStatus } from '@/types/vehicle';
 import debounce from 'debounce';
 import { storeToRefs } from 'pinia';
+import { reactive } from 'vue';
 import { ref } from 'vue';
 const headers = ref([
   {
@@ -17,15 +18,27 @@ const headers = ref([
   { title: 'Modelo', key: 'model', align: 'start' },
   { title: 'Status', key: 'status', align: 'start' },
   { title: 'Año', key: 'year', align: 'start' },
+  { title: 'Fecha de creación', key: 'createdAt', align: 'start' },
   { title: 'Acciones', key: 'actions', align: 'start' },
 ])
 const vehicleStore = useVehicleStore()
 const { isLoading, query, vehicles, totalCount } = storeToRefs(vehicleStore)
 const isMobile = ref(false)
+const dialog = reactive({
+  isOpen: false,
+  title: '',
+  message: ''
+})
 const media = window.matchMedia('(max-width: 768px)')
 media.addEventListener('change', (e) => {
   isMobile.value = e.matches
 })
+
+const closeDialog = () => {
+  dialog.isOpen = false
+  dialog.title = ''
+  dialog.message = ''
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getVehicles = debounce((options: any) => {
@@ -38,13 +51,37 @@ const getVehicles = debounce((options: any) => {
   vehicleStore.getVehicles(newQuery)
 }, 500)
 
-const updateVehicleStatus = (_id: string, status: VehicleStatus) => {
-  vehicleStore.patchVehicle(_id, { status })
+const updateVehicleStatus = async (_id: string, status: VehicleStatus) => {
+  const [data, error] = await vehicleStore.patchVehicle(_id, { status })
+
+  if (error) {
+    dialog.isOpen = true
+    dialog.title = 'Error'
+    dialog.message = error || 'Ha ocurrido un error al actualizar el status del vehículo'
+    return
+  } else {
+    dialog.isOpen = true
+    dialog.title = 'Éxito'
+    dialog.message = data?.message || 'El status del vehículo ha sido actualizado correctamente'
+  }
+
   getVehicles({ page: 1, search: '' })
 }
 
-const deleteVehicle = (_id: string) => {
-  vehicleStore.deleteVehicle(_id)
+const deleteVehicle = async (_id: string) => {
+  const [data, error] = await vehicleStore.deleteVehicle(_id)
+
+  if (error) {
+    dialog.isOpen = true
+    dialog.title = 'Error'
+    dialog.message = error || 'Ha ocurrido un error al eliminar el vehículo'
+    return
+  } else {
+    dialog.isOpen = true
+    dialog.title = 'Éxito'
+    dialog.message = data?.message || 'El vehículo ha sido eliminado correctamente'
+  }
+
   getVehicles({ page: 1, search: '' })
 }
 
@@ -52,6 +89,13 @@ const deleteVehicle = (_id: string) => {
 
 <template>
   <AdminLayout>
+    <v-dialog v-model="dialog.isOpen" width="auto">
+      <v-card max-width="400" prepend-icon="mdi-alert-circle" :text="dialog.message" :title="dialog.title">
+        <template v-slot:actions>
+          <v-btn class="ms-auto" text="Ok" @click="closeDialog"></v-btn>
+        </template>
+      </v-card>
+    </v-dialog>
     <v-container>
       <div class="d-flex flex-column flex-sm-row justify-space-between align-center mb-8 ga-3">
         <h1 class="tw-text-3xl d-inline-block">Listado de Vehículos</h1>
@@ -64,6 +108,9 @@ const deleteVehicle = (_id: string) => {
         loading-text="Obteniendo información de los vehículos..." items-per-page-text="Vehículos por página"
         no-data-text="No hay vehículos en nuestro sistema." :search="query.search" item-value="_id"
         @update:options="getVehicles" :mobile="isMobile">
+        <template v-slot:item.createdAt="{ item }">
+          {{ new Date(item.createdAt as string).toLocaleString() }}
+        </template>
         <template v-slot:item.actions="{ item }">
           <v-menu :close-on-content-click="false">
             <template v-slot:activator="{ props }">
@@ -72,7 +119,8 @@ const deleteVehicle = (_id: string) => {
             <v-list>
               <v-list-item>
                 <v-list-item-title>
-                  <v-btn variant="text" prepend-icon="mdi-pencil" color="blue-grey">
+                  <v-btn variant="text" prepend-icon="mdi-pencil" color="blue-grey"
+                    :to="`/vehicles/update/${item._id}`">
                     Editar
                   </v-btn>
                 </v-list-item-title>
